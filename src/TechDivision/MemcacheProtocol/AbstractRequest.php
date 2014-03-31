@@ -24,8 +24,6 @@
 
 namespace TechDivision\MemcacheProtocol;
 
-use TechDivision\CacheServer\Request;
-
 /**
  * The abstract base class for a cache entry implementation, e. g. memcache.
  * 
@@ -39,7 +37,7 @@ use TechDivision\CacheServer\Request;
  * @link      http://www.appserver.io
  * @link      https://github.com/memcached/memcached/blob/master/doc/protocol.txt
  */
-abstract class AbstractRequest implements Request
+abstract class AbstractRequest implements CacheRequest
 {
     
     /**
@@ -127,7 +125,7 @@ abstract class AbstractRequest implements Request
      * Resets all attributes to the default values.
      *
      * @return void
-     * @see \TechDivision\CacheServer\CacheRequest::reset()
+     * @see \TechDivision\MemcacheProtocol\CacheRequest::reset()
      */
     public function reset()
     {
@@ -310,7 +308,7 @@ abstract class AbstractRequest implements Request
      * Return's TRUE if the request is complete, ELSE false
      * 
      * @return boolean TRUE if the request is complete, ELSE false
-     * @see \TechDivision\CacheServer\CacheRequest::getComplete()
+     * @see \TechDivision\MemcacheProtocol\CacheRequest::getComplete()
      */
     public function isComplete()
     {

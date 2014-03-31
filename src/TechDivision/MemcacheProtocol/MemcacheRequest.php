@@ -124,21 +124,6 @@ class MemcacheRequest extends AbstractRequest
         if ($line == false || $line == "\r" || $line == "\n" || $line == "\r\n") {
             return array();
         }
-
-        // strip header from request (in case of a set request e. g.)
-        // $header = strstr($line, $this->getNewLine(), true);
-        
-        /*
-        $data = substr(
-            strstr(
-                $request,
-                $this->getNewLine()
-            ),
-            strlen($this->getNewLine())
-        );
-        */
-        
-        error_log("Found header line: " . $line);
         
         // try to read action
         return explode(' ', trim($line));
@@ -306,11 +291,6 @@ class MemcacheRequest extends AbstractRequest
      */
     protected function pushData($data)
     {
-
-        error_log('----- START ---------');
-        error_log(var_export($data, true));
-        error_log('----- END ---------');
-        
         
         // first check if we are at the strings end
         if ($data == $this->getNewline() && strlen($this->getData()) == $this->getBytes()) {
@@ -320,23 +300,12 @@ class MemcacheRequest extends AbstractRequest
             
         } elseif ($data == "\n" || $data == "\r" || $data == "\r\n") {
             
-            error_log("found missing");
+            error_log("This SHOULD never be the case");
             
         } else {
             
-            // if not at the end, rtrim the string (cut off whitespace to the right)
-            /*
-            if ($data != $this->getNewLine()) {
-                $data = rtrim($data);
-            }
-            */
-            
             // set the data
             $this->setData(trim($data));
-            
-            error_log("Requested bytes: " . $this->getBytes());
-            error_log("Data length: " . strlen($this->getData()));
-            error_log(var_export($data, true));
             
             // check if data has the specified length
             if (strlen($this->getData()) == $this->getBytes() || $this->getBytes() == null) {

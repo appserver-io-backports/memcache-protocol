@@ -21,7 +21,7 @@
  * @link      https://github.com/memcached/memcached/blob/master/doc/protocol.txt
  */
 
-namespace TechDivision\MemcacheProtocol\Protocol;
+namespace TechDivision\MemcacheProtocol;
 
 use TechDivision\WebServer\Interfaces\ConnectionHandlerInterface;
 use TechDivision\WebServer\Interfaces\ServerContextInterface;
@@ -193,8 +193,8 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
         $keepAliveMax = (int) $serverConfig->getKeepAliveMax();
         $keepAliveConnection = true;
         
-        // create Memcache ValueObject for request parsing
-        $vo = new MemcacheEntry();
+        // create Memcache request instance
+        $vo = new MemcacheRequest();
         
         do {
         
