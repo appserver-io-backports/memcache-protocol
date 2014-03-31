@@ -12,7 +12,7 @@
  * PHP version 5
  *
  * @category  Library
- * @package   TechDivision_MemcacheRequest
+ * @package   TechDivision_MemcacheProtocol
  * @author    Philipp Dittert <pd@techdivision.com>
  * @author    Tim Wagner <tw@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
@@ -22,13 +22,13 @@
  * @link      https://github.com/memcached/memcached/blob/master/doc/protocol.txt
  */
 
-namespace TechDivision\MemcacheRequest;
+namespace TechDivision\MemcacheProtocol;
 
 /**
  * Memcache protocol constants and helper methods.
  * 
  * @category  Library
- * @package   TechDivision_MemcacheRequest
+ * @package   TechDivision_MemcacheProtocol
  * @author    Philipp Dittert <pd@techdivision.com>
  * @author    Tim Wagner <tw@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>

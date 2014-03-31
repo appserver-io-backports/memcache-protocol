@@ -21,7 +21,7 @@
  * @link      https://github.com/memcached/memcached/blob/master/doc/protocol.txt
  */
 
-namespace TechDivision\CacheServer;
+namespace TechDivision\MemcacheProtocol;
 
 /**
  * This is a cache request interface that all cache request implementations
