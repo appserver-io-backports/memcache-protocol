@@ -197,21 +197,26 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
         $vo = new MemcacheRequest();
         
         do {
-        
-            // read the first line from connection
-            $line = $connection->readLine(2048, $keepAliveTimeout);
-    
+            
+            // receive a line from the connection
+            $line = $connection->readLine(1024, $keepAliveTimeout);
+            
             // push message into ValueObject
             $vo->push($line);
+            
+            // check if we've to load data also
+            if ($vo->isComplete() === false) { // if yes, load it (+ 2 for the \r\n send by the Memcache client)
+                $vo->push($connection->read($vo->bytesToRead() + 2, $keepAliveTimeout));
+            }
     
             // check if the VO is already complete
-            if ($vo->isComplete()) {
+            if ($vo->isComplete() === true) {
                 
                 // handle the request
                 $cache->request($vo);
     
                 // send response to client (even if response is empty)
-                $connection->write($cache->getResponse() . "\r\n");
+                $connection->write($cache->getResponse() . $cache->getNewLine());
     
                 // select current state
                 switch ($cache->getState()) {
@@ -242,6 +247,17 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
                         break;
                         
                 }
+                
+            } else {
+
+
+                $vo->reset();
+                $cache->reset();
+                
+                $connection->write("SERVER ERROR unknown state\r\n");
+                        
+                $keepAliveConnection = false;
+                
             }
             
         } while ($keepAliveConnection === true);

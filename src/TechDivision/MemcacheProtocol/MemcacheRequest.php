@@ -100,6 +100,10 @@ class MemcacheRequest extends AbstractRequest
                     $this->decrementAction($var);
                     break;
                     
+                case 'flush_all':
+                    $this->flushAllAction($var);
+                    break;
+                    
                 default:
                     throw new \Exception("Found unknown request action $var[0]");
                     break;
@@ -221,12 +225,6 @@ class MemcacheRequest extends AbstractRequest
         } else {
             throw new \Exception("CLIENT_ERROR bad data chunk");
         }
-
-        /*
-        if ($request['data']) {
-            $this->pushData($request['data']);
-        }
-        */
     }
 
     /**
@@ -251,14 +249,16 @@ class MemcacheRequest extends AbstractRequest
      */
     protected function incrementAction($request)
     {
+        
         $this->setKey($request[1]);
 
         // set value to specify
         if (isset($request[2])) {
-            $this->pushData($request[2]);
+            $this->setData($request[2]);
         }
         
         $this->setRequestAction('increment');
+        $this->setComplete(true);
     }
 
     /**
@@ -274,10 +274,24 @@ class MemcacheRequest extends AbstractRequest
 
         // set value to specify
         if (isset($request[2])) {
-            $this->pushData($request[2]);
+            $this->setData($request[2]);
         }
         
         $this->setRequestAction('decrement');
+        $this->setComplete(true);
+    }
+
+    /**
+     * The memcache "flush" action (that marks
+     * all invalid).
+     * 
+     * @return void
+     * @link http://de1.php.net/manual/en/memcached.flush.php
+     */
+    protected function flushAllAction($request)
+    {
+        $this->setRequestAction('flushAll');
+        $this->setComplete(true);
     }
 
     /**
@@ -294,28 +308,22 @@ class MemcacheRequest extends AbstractRequest
         
         // first check if we are at the strings end
         if ($data == $this->getNewline() && strlen($this->getData()) == $this->getBytes()) {
-            
             $this->setComplete(true);
             return true;
-            
-        } elseif ($data == "\n" || $data == "\r" || $data == "\r\n") {
-            
-            error_log("This SHOULD never be the case");
-            
-        } else {
-            
-            // set the data
-            $this->setData(trim($data));
-            
-            // check if data has the specified length
-            if (strlen($this->getData()) == $this->getBytes() || $this->getBytes() == null) {
-                $this->setComplete(true);
-                return true;
-                
-            // if NOT throw an exception
-            } elseif (strlen($this->getData()) > $this->getBytes()) {
-                throw new \Exception("CLIENT_ERROR bad data chunk");
-            }
+        }
+        
+        // set the data
+        $this->setData(substr($data, 0, strlen($data) - 2));
+        
+        // check if data has the specified length
+        if (strlen($this->getData()) == $this->getBytes() || $this->getBytes() == null) {
+            $this->setComplete(true);
+            return true;
+        } 
+        
+        // if NOT throw an exception
+        if (strlen($this->getData()) > $this->getBytes()) {
+            throw new \Exception("CLIENT_ERROR bad data chunk");
         }
     }
 }
