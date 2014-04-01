@@ -59,7 +59,7 @@ abstract class AbstractRequest implements CacheRequest
      * 
      * @var boolean
      */
-    protected $complete;
+    protected $complete = false;
 
     /**
      * The memcache flag value to enable/disable compression.
@@ -313,5 +313,16 @@ abstract class AbstractRequest implements CacheRequest
     public function isComplete()
     {
         return $this->getComplete();
+    }
+    
+    /**
+     * Calculates the number of bytes necessary to load from the
+     * socket to complete this request.
+     * 
+     * @return integer The necessary number of bytes to read from the socket
+     */
+    public function bytesToRead()
+    {
+        return $this->getBytes() - strlen($this->getData());
     }
 }
