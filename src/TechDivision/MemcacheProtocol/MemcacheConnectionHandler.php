@@ -28,6 +28,10 @@ use TechDivision\WebServer\Interfaces\ServerContextInterface;
 use TechDivision\WebServer\Interfaces\WorkerInterface;
 use TechDivision\WebServer\Sockets\SocketInterface;
 
+use TechDivision\Storage\GenericStackable;
+use TechDivision\MemcacheServer\MemcacheServer;
+use TechDivision\MemcacheServer\GarbageCollector;
+
 /**
  * This is a connection handler to handle Memcache compatible cache requests. 
  *
@@ -74,9 +78,16 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     /**
      * The server API implementation.
      * 
-     * @var \TechDivision\LemCacheContainer\Protocol\Memcache
+     * @var \TechDivision\MemcacheServer\MemcacheServer
      */
-    protected $serverApi;
+    protected $cache;
+    
+    /**
+     * The garbage collector for the API implementation.
+     * 
+     * @var \TechDivision\MemcacheServer\GarbageCollector
+     */
+    protected $gc;
 
     /**
      * Inits the connection handler by given context and params
@@ -88,8 +99,13 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
     {
+        
         // set server context
         $this->serverContext = $serverContext;
+        
+        // initialize the cache API and the garbage collector
+        $this->cache = new MemcacheServer(new GenericStackable());
+        $this->gc = new GarbageCollector($this->cache);
 
         // register shutdown handler
         register_shutdown_function(array(&$this, "shutdown"));
@@ -124,7 +140,7 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
      */
     public function getCache()
     {
-        return $this->getServerContext()->getCache();
+        return $this->cache;
     }
 
     /**
