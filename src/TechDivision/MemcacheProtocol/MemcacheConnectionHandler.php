@@ -23,10 +23,10 @@
 
 namespace TechDivision\MemcacheProtocol;
 
-use TechDivision\WebServer\Interfaces\ConnectionHandlerInterface;
-use TechDivision\WebServer\Interfaces\ServerContextInterface;
-use TechDivision\WebServer\Interfaces\WorkerInterface;
-use TechDivision\WebServer\Sockets\SocketInterface;
+use TechDivision\Server\Interfaces\ConnectionHandlerInterface;
+use TechDivision\Server\Interfaces\ServerContextInterface;
+use TechDivision\Server\Interfaces\WorkerInterface;
+use TechDivision\Server\Sockets\SocketInterface;
 
 use TechDivision\Storage\GenericStackable;
 use TechDivision\MemcacheServer\MemcacheServer;
@@ -50,21 +50,21 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     /**
      * The server context instance
      *
-     * @var \TechDivision\WebServer\Interfaces\ServerContextInterface
+     * @var \TechDivision\Server\Interfaces\ServerContextInterface
      */
     protected $serverContext;
 
     /**
      * The connection instance
      *
-     * @var \TechDivision\WebServer\Sockets\SocketInterface
+     * @var \TechDivision\Server\Sockets\SocketInterface
      */
     protected $connection;
 
     /**
      * The worker instance
      *
-     * @var \TechDivision\WebServer\Interfaces\WorkerInterface
+     * @var \TechDivision\Server\Interfaces\WorkerInterface
      */
     protected $worker;
 
@@ -92,14 +92,13 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     /**
      * Inits the connection handler by given context and params
      *
-     * @param \TechDivision\WebServer\Interfaces\ServerContextInterface $serverContext The servers context
-     * @param array                                                     $params        The params for connection handler
+     * @param \TechDivision\Server\Interfaces\ServerContextInterface $serverContext The servers context
+     * @param array                                                  $params        The params for connection handler
      *
      * @return void
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
     {
-        
         // set server context
         $this->serverContext = $serverContext;
         
@@ -146,7 +145,7 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     /**
      * Returns the server context instance
      *
-     * @return \TechDivision\WebServer\Interfaces\ServerContextInterface
+     * @return \TechDivision\Server\Interfaces\ServerContextInterface
      */
     public function getServerContext()
     {
@@ -156,7 +155,7 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     /**
      * Returns the servers configuration
      *
-     * @return \TechDivision\WebServer\Interfaces\ServerConfigurationInterface
+     * @return \TechDivision\Server\Interfaces\ServerConfigurationInterface
      */
     public function getServerConfig()
     {
@@ -166,7 +165,7 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     /**
      * Returns the connection used to handle with
      *
-     * @return \TechDivision\WebServer\Sockets\SocketInterface
+     * @return \TechDivision\Server\Sockets\SocketInterface
      */
     protected function getConnection()
     {
@@ -176,7 +175,7 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     /**
      * Returns the worker instance which starte this worker thread
      *
-     * @return \TechDivision\WebServer\Interfaces\WorkerInterface
+     * @return \TechDivision\Server\Interfaces\WorkerInterface
      */
     protected function getWorker()
     {
@@ -187,8 +186,8 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
      * Handles the connection with the connected client in a proper way the given
      * protocol type and version expects for example.
      *
-     * @param \TechDivision\WebServer\Sockets\SocketInterface    $connection The connection to handle
-     * @param \TechDivision\WebServer\Interfaces\WorkerInterface $worker     The worker how started this handle
+     * @param \TechDivision\Server\Sockets\SocketInterface    $connection The connection to handle
+     * @param \TechDivision\Server\Interfaces\WorkerInterface $worker     The worker how started this handle
      *
      * @return bool Weather it was responsible to handle the firstLine or not.
      */
