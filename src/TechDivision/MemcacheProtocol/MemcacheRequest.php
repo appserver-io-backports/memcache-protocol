@@ -284,7 +284,9 @@ class MemcacheRequest extends AbstractRequest
     /**
      * The memcache "flush" action (that marks
      * all invalid).
-     * 
+     *
+     * @param array $request The actual request instance
+     *
      * @return void
      * @link http://de1.php.net/manual/en/memcached.flush.php
      */
@@ -319,7 +321,7 @@ class MemcacheRequest extends AbstractRequest
         if (strlen($this->getData()) == $this->getBytes() || $this->getBytes() == null) {
             $this->setComplete(true);
             return true;
-        } 
+        }
         
         // if NOT throw an exception
         if (strlen($this->getData()) > $this->getBytes()) {
