@@ -25,6 +25,7 @@ namespace TechDivision\MemcacheProtocol;
 
 use TechDivision\Server\Interfaces\ConnectionHandlerInterface;
 use TechDivision\Server\Interfaces\ServerContextInterface;
+use TechDivision\Server\Interfaces\RequestContextInterface;
 use TechDivision\Server\Interfaces\WorkerInterface;
 use TechDivision\Server\Sockets\SocketInterface;
 
@@ -33,7 +34,7 @@ use TechDivision\MemcacheServer\MemcacheServer;
 use TechDivision\MemcacheServer\GarbageCollector;
 
 /**
- * This is a connection handler to handle Memcache compatible cache requests. 
+ * This is a connection handler to handle Memcache compatible cache requests.
  *
  * @category  Library
  * @package   TechDivision_MemcacheProtocol
@@ -55,6 +56,13 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     protected $serverContext;
 
     /**
+     * Hold's the request's context instance
+     *
+     * @var \TechDivision\Server\Interfaces\RequestContextInterface
+     */
+    protected $requestContext;
+
+    /**
      * The connection instance
      *
      * @var \TechDivision\Server\Sockets\SocketInterface
@@ -74,17 +82,17 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
      * @var array
      */
     protected $modules;
-    
+
     /**
      * The server API implementation.
-     * 
+     *
      * @var \TechDivision\MemcacheServer\MemcacheServer
      */
     protected $cache;
-    
+
     /**
      * The garbage collector for the API implementation.
-     * 
+     *
      * @var \TechDivision\MemcacheServer\GarbageCollector
      */
     protected $gc;
@@ -99,9 +107,10 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
     {
+
         // set server context
         $this->serverContext = $serverContext;
-        
+
         // initialize the cache API and the garbage collector
         $this->cache = new MemcacheServer(new GenericStackable());
         $this->gc = new GarbageCollector($this->cache);
@@ -120,6 +129,18 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     public function injectModules($modules)
     {
         $this->modules = $modules;
+    }
+
+    /**
+     * Injects the request context
+     *
+     * @param \TechDivision\Server\Interfaces\RequestContextInterface $requestContext The request's context instance
+     *
+     * @return void
+     */
+    public function injectRequestContext(RequestContextInterface $requestContext)
+    {
+        $this->requestContext = $requestContext;
     }
 
     /**
@@ -150,6 +171,16 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
     public function getServerContext()
     {
         return $this->serverContext;
+    }
+
+    /**
+     * Return's the request's context instance
+     *
+     * @return \TechDivision\Server\Interfaces\RequestContextInterface
+     */
+    public function getRequestContext()
+    {
+        return $this->requestContext;
     }
 
     /**
@@ -193,7 +224,7 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
      */
     public function handle(SocketInterface $connection, WorkerInterface $worker)
     {
-        
+
         // add connection ref to self
         $this->connection = $connection;
         $this->worker = $worker;
@@ -202,79 +233,79 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
         $cache = $this->getCache();
         $serverContext = $this->getServerContext();
         $serverConfig = $serverContext->getServerConfig();
-        
+
         // init keep alive settings
         $keepAliveTimeout = (int) $serverConfig->getKeepAliveTimeout();
         $keepAliveMax = (int) $serverConfig->getKeepAliveMax();
         $keepAliveConnection = true;
-        
+
         // create Memcache request instance
         $vo = new MemcacheRequest();
-        
+
         do {
-            
+
             // receive a line from the connection
             $line = $connection->readLine(1024, $keepAliveTimeout);
-            
+
             // push message into ValueObject
             $vo->push($line);
-            
+
             // check if we've to load data also
             if ($vo->isComplete() === false) { // if yes, load it (+ 2 for the \r\n send by the Memcache client)
                 $vo->push($connection->read($vo->bytesToRead() + 2, $keepAliveTimeout));
             }
-    
+
             // check if the VO is already complete
             if ($vo->isComplete() === true) {
-                
+
                 // handle the request
                 $cache->request($vo);
-    
+
                 // send response to client (even if response is empty)
                 $connection->write($cache->getResponse() . $cache->getNewLine());
-    
+
                 // select current state
                 switch ($cache->getState()) {
-                
+
                     case MemcacheProtocol::STATE_RESET:
-                        
+
                         $vo->reset();
                         $cache->reset();
-                        
+
                         break;
-                        
+
                     case MemcacheProtocol::STATE_CLOSE:
-                        
+
                         $vo->reset();
                         $cache->reset();
-                        
+
                         $keepAliveConnection = false;
-                        
+
                         break;
-                        
+
                     default:
-                        
+
                         $vo->reset();
                         $cache->reset();
-                        
+
                         $connection->write("SERVER ERROR unknown state\r\n");
-                        
+
                         break;
-                        
+
                 }
-                
+
             } else {
 
 
                 $vo->reset();
                 $cache->reset();
-                
+
                 $connection->write("SERVER ERROR unknown state\r\n");
-                        
+
                 $keepAliveConnection = false;
-                
+
             }
-            
+
         } while ($keepAliveConnection === true);
 
         // finally close connection
@@ -294,7 +325,7 @@ class MemcacheConnectionHandler implements ConnectionHandlerInterface
 
         // check if connections is still alive
         if ($connection) {
-            
+
             // close client connection
             $this->getConnection()->close();
         }
