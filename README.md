@@ -1,4 +1,4 @@
-# TechDivision_Lang
+# TechDivision_MemcacheProtocol
 
 [![Latest Stable Version](https://poser.pugx.org/techdivision/memcacheprotocol/v/stable.png)](https://packagist.org/packages/techdivision/memcacheprotocol) [![Total Downloads](https://poser.pugx.org/techdivision/memcacheprotocol/downloads.png)](https://packagist.org/packages/techdivision/memcacheprotocol) [![Latest Unstable Version](https://poser.pugx.org/techdivision/memcacheprotocol/v/unstable.png)](https://packagist.org/packages/techdivision/memcacheprotocol) [![License](https://poser.pugx.org/techdivision/memcacheprotocol/license.png)](https://packagist.org/packages/techdivision/memcacheprotocol) [![Build Status](https://travis-ci.org/techdivision/TechDivision_MemcacheProtocol.png)](https://travis-ci.org/techdivision/TechDivision_MemcacheProtocol)[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/techdivision/TechDivision_MemcacheProtocol/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/techdivision/TechDivision_MemcacheProtocol/?branch=master)[![Code Coverage](https://scrutinizer-ci.com/g/techdivision/TechDivision_MemcacheProtocol/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/techdivision/TechDivision_MemcacheProtocol/?branch=master)
 
@@ -23,3 +23,9 @@ to your ```composer.json``` and invoke ```composer update``` in your project.
 ## Usage
 
 Coming soon!
+
+# External Links
+
+* appserver.io [combined documentation](http://docs.appserver.io)
+* [Getting started](https://github.com/techdivision/TechDivision_AppserverDocumentation/tree/master/docs/getting-started)
+* Documentation found on [GitHub](https://github.com/techdivision/TechDivision_AppserverDocumentation)
